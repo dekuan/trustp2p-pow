@@ -160,24 +160,22 @@ class CP2pServer extends CP2pDeliver
 		//
 		_p2pLog.info( `call _onMessageTask with body : `, oBody );
 
-		let oResponse;
-
-		oResponse	=
+		let oResponse	=
 		{
-			"id": "1",
+			"id": 1,
 			"pow": "equihash",
 			"params": {
-			"version": 0,
-				"roundNumber": "0x00000000",
+				"version": 0,
+				"roundNumber": 12,
 				"nonce": 0,
-				"prepubSeed": "",
-				"prepreCoinbase": "",
-				"preFirstStableMCU": "",
-				"pubkey": "",
-				"difficulty": "000fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
-				"filterList": [],
+				"prepubSeed": "00000000000000000015a0f5afb0006b9415bc781fa5ce78115a6d07d5a10010",
+				"prepreCoinbase": "00000000000000000015a0f5afb0006b9415bc781fa5ce78115a6d07d5a1001000000000000000000015a0f5afb0006b9415bc781fa5ce78115a6d07d5a10010",
+				"preFirstStableMCU": "00000000000000000015a0f5afb0006b9415bc781fa5ce78115a6d07d5a1001000000000000000000015a0f5afb0006b9415bc781fa5ce78115a6d07d5a10010",
+				"pubkey": "122334555333",
+				"difficulty": "07ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+				"filterList": ["", ""],
 				"times": 0,
-				"timeout": 222,
+				"timeout": 0
 			},
 			"interrupt": false,
 			"error": null

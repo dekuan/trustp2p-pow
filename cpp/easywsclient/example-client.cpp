@@ -22,10 +22,10 @@ void handle_message( const std::string & message )
 
 int main()
 {
-    ws = WebSocket::from_url( "ws://192.168.1.114:1108" );
+    ws = WebSocket::from_url( "ws://10.10.11.68:1108" );
     assert( ws );
-    ws->send( "[\"pow/task\",{\"s\":111111}]" );
-    ws->send( "[\"pow/task\",{\"s\":222222}]" );
+    ws->send( "[\"pow/task\",{\"s\":111111,\"fff\":\"############################################################\"}]" );
+    ws->send( "[\"pow/task\",{\"s\":222222,\"fff\":\"$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\"}]" );
 
     while ( ws->getReadyState() != WebSocket::CLOSED )
     {
