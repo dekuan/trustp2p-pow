@@ -35,11 +35,9 @@ class CP2pClient extends CP2pDeliver
 		/**
 		 *	create client instance
 		 */
+		this.m_oOptions			= Object.assign( {}, oOptions );
 		this.m_cDriverClient		= CP2pDriver.createInstance( 'client', oOptions );
 		super.cDriver			= this.m_cDriverClient;
-
-		//	...
-		this.m_cThreadBootstrap		= new CThreadBootstrap( oOptions );
 
 		//
 		this._init();
@@ -56,7 +54,7 @@ class CP2pClient extends CP2pDeliver
 	{
 		setImmediate( () =>
 		{
-			this.m_cDriverClient.connectToServer( 'ws://127.0.0.1:1107' );
+			this.m_cDriverClient.connectToServer( this.m_oOptions.sHub );
 		});
 	}
 
@@ -68,14 +66,6 @@ class CP2pClient extends CP2pDeliver
 	async _init()
 	{
 		//
-		//	load threads
-		//
-		await this.m_cThreadBootstrap.run({
-			server	: null,
-			client	: this,
-		});
-
-		//
 		//	events for client
 		//
 		this.m_cDriverClient
@@ -86,38 +76,13 @@ class CP2pClient extends CP2pDeliver
 			//
 			//	send our version information to server peer
 			//
-			this.sendVersion( oSocket );
-			setImmediate
-			(
-				() =>
-				{
-					this.m_cThreadBootstrap.transitSocketOpen( oSocket );
-				}
-			);
+			//this.sendVersion( oSocket );
+
+			this.sendComputeMiner();
 		})
-		.on( CP2pDriver.EVENT_MESSAGE, ( oSocket, vMessage ) =>
+		.on( CP2pDriver.EVENT_MESSAGE, ( oSocket, sMessage ) =>
 		{
-			let objMessage	= this.m_cP2pPackage.decodePackage( vMessage );
-			if ( objMessage )
-			{
-				_p2pLog.info( `* ${ this.constructor.name } Received ${ CP2pDriver.EVENT_MESSAGE } :: ( type:${ objMessage.type }, event:${ objMessage.event }, tag:${ objMessage.tag } )` );
-				switch ( objMessage.type )
-				{
-					case CP2pPackage.PACKAGE_PING:
-					case CP2pPackage.PACKAGE_REQUEST:
-						this.m_cThreadBootstrap.transitSocketMessage( oSocket, objMessage );
-						break;
-					case CP2pPackage.PACKAGE_RESPONSE:
-						this.onRequestResponded( oSocket, objMessage );
-						break;
-					case CP2pPackage.PACKAGE_TALK:
-						break;
-				}
-			}
-			else
-			{
-				_p2pLog.info( `* ${ this.constructor.name } Received ${ CP2pDriver.EVENT_MESSAGE } :: # abandon invalid message.` );
-			}
+			_p2pLog.info( `* ${ this.constructor.name } Received ${ CP2pDriver.EVENT_MESSAGE } :: ${ sMessage }` );
 		})
 		.on( CP2pDriver.EVENT_CLOSE, ( oSocket ) =>
 		{
@@ -127,16 +92,51 @@ class CP2pClient extends CP2pDeliver
 			//	handle a socket was closed
 			//
 			this.handleClosed( oSocket );
-			setImmediate( () =>
-			{
-				this.m_cThreadBootstrap.transitSocketClose( oSocket );
-			});
 		})
 		.on( CP2pDriver.EVENT_ERROR, ( vError ) =>
 		{
 			_p2pLog.info( `* ${ this.constructor.name } Received [${ CP2pDriver.EVENT_ERROR }].` );
-			this.m_cThreadBootstrap.transitSocketError( vError );
 		});
+	}
+
+
+	//	...
+	sendComputeMiner( oSocket )
+	{
+		//
+		//	pubSeed	hex string 128 chars, 256, 64字节
+		//
+		let jsonBody = {
+			id:1,
+			pow:"equihash",
+			"params": {
+				version:0,
+				roundNumber:14,
+				nonce:0,
+				pubSeed:"00000000000000000015a0f5afb0006b9415bc781fa5ce78115a6d07d5a10010",
+				pubKey:"NBEFJ3LKG2SBSBK7D7GCFREOAFMS7QTQ",
+				difficulty:111,
+				filterList:[],
+				times:0,
+				timeout:0
+			},
+			interrupt:0,
+			error:null
+		};
+
+		this.sendRequest
+		(
+			this,
+			oSocket,
+			CP2pPackage.PACKAGE_REQUEST,
+			'pow/task',
+			JSON.stringify( jsonBody ),
+			true,
+			function( oInstance, oSocket, request, sResponse )
+			{
+				console.log( `response from Mining :`, request, sResponse );
+			}
+		);
 	}
 }
 

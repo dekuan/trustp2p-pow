@@ -56,7 +56,7 @@ class CP2pMessage
 		}
 
 		//	...
-		let jsonMessage	= { type : nPackageType, event : sEvent, body : oBody };
+		let jsonMessage	= [ sEvent, oBody ];
 		oSocket.send( JSON.stringify( jsonMessage ) );
 
 		//	...

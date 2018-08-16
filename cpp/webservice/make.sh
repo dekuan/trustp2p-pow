@@ -1,0 +1,1 @@
+g++ -dynamiclib -o libwebservice.dylib webservice.cpp

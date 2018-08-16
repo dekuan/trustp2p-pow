@@ -1,0 +1,1 @@
+g++ usedll.cpp -L./ -lwebservice

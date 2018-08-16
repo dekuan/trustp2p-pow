@@ -160,7 +160,9 @@ class CP2pServer extends CP2pDeliver
 		//
 		_p2pLog.info( `call _onMessageTask with body : `, oBody );
 
-		let oResponse	=
+		//	["response",{"response":"subscribed"}] to wss://stable.trustnote.org/tn
+
+		let oResponseBody	=
 		{
 			"id": 1,
 			"pow": "equihash",
@@ -186,8 +188,8 @@ class CP2pServer extends CP2pDeliver
 		(
 			oSocket,
 			CP2pPackage.PACKAGE_RESPONSE,
-			'response',
-			oResponse
+			'pow/response',
+			oResponseBody
 		);
 	}
 
@@ -195,13 +197,15 @@ class CP2pServer extends CP2pDeliver
 	{
 		_p2pLog.info( `call _onMessageSubmit with body : `, oBody );
 
+		let oResponseBody	= {};
+
 		//	oSocket, nPackageType, sEvent, oBody
 		return this.sendResponse
 		(
 			oSocket,
 			CP2pPackage.PACKAGE_RESPONSE,
-			'response',
-			{ 'result' : 'received' }
+			'pow/response',
+			oResponseBody
 		);
 	}
 

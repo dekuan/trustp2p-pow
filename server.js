@@ -5,7 +5,7 @@ const CP2pServer 	= require( './CP2pServer.js' );
 
 
 const oOptions	={
-	nPort			: 1108,
+	nPort			: 1107,
 };
 const p2pServer	= new CP2pServer( oOptions );
 p2pServer.startServer();
